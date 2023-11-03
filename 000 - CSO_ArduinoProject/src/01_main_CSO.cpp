@@ -23,8 +23,9 @@ void setup() {
   Serial.begin(SERIAL_SPEED); // For debug use
   Serial.println("CAN Read - Testing receival of CAN Bus message");  
   delay(1000);
+  Serial.println("Debug");
   
-  if(Canbus.init(CANSPEED_500))  //Initialise MCP2515 CAN controller at the specified speed
+  if(Canbus.init(CANSPEED_250))  //Initialise MCP2515 CAN controller at the specified speed
     Serial.println("CAN Init ok");
   else
     Serial.println("Can't init CAN");

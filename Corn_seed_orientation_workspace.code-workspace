@@ -11,6 +11,12 @@
 		{
 			"name": "SparkFun_CAN-Bus_Arduino_Library-master",
 			"path": "SparkFun_CAN-Bus_Arduino_Library-master"
+		},
+		{
+			"path": "J1939_Request_Message"
+		},
+		{
+			"path": "MCP_CAN_lib-master"
 		}
 	],
 	"settings": {}
