@@ -27,6 +27,11 @@
 #define EEC1_PGN						  61444
 #define EngineSpeed_SPN				190
 
+/* PGN 65256 Navigation-Based Vehicle Speed
+Speed of the vehicle as calculated from a device such as a Global Positioning System (GPS).*/
+#define NBVS_PGN					65256
+#define NBVS_SPN 	        517
+
 /** PGN 65096 WBSD_TECU */
 #define WBSD_TECU_PGN					65096
 #define WheelBasedMachineDirection_SPN 	1864
