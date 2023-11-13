@@ -201,6 +201,9 @@ CanMessage CANClass::getMessage ()
 ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, char *spn_buffer) 
 {
 	ISOBUSMessage i;
+    
+    // Debugging
+    // Serial.print("Debug: "); Serial.println(i.pgn);
 	
 	if (mcp2515_msg_received())
 	{
@@ -224,16 +227,34 @@ ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, cha
 					
 					case WBSD_TECU_PGN:
 						if (WheelBasedMachineDirection_SPN == spn) /* Wheel based direction (enum), SPN: , Start position: 2, Lenght 4 bytes*/
-						{				
+						{	
+                            Serial.println("WheelBasedMachineDirection_SPN received");			
 							i.spn_data = (i.data[7] >> 0x00) & 0x3;
 							/*0=Reverse, 1=Forward, 2=ErrorIndicator, 3=NotAvailable */
 							sprintf(spn_buffer,"%d Direction ",(int) i.spn_data);
 							i.status = 0;
 						}
+
+                        if (WBMspeed_SPN == spn)
+                        {
+                            Serial.println("WBMspeed_SPN received");
+                            Serial.println(i.extended);
+                            Serial.println(i.id);
+                            Serial.println(i.len);
+
+                            // Print the elements of the array
+                            Serial.print("Array data: ");
+                            for (int c = 0; c < int(sizeof(i.data)); ++c) {
+                                Serial.print(i.data[c]);
+                                Serial.print(" ");
+                            }
+                            Serial.println();  
+                        }
 					break;
 
 					case NBVehicleSpeed_PGN:
-						if (NBVehicleSpeed_SPN == spn) /* Navigation based vehicle speed */
+                            Serial.println("Entered");
+						if (WBMspeed_SPN == spn) /* Navigation based vehicle speed */
 						{	
                             Serial.println("Navigation based vehicle speed received");
                             Serial.println(i.extended);
@@ -252,6 +273,8 @@ ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, cha
 							// sprintf(spn_buffer,"%d Direction ",(int) i.spn_data);
 							// i.status = 0;
 						}
+
+
 					break;			
 					}
                     

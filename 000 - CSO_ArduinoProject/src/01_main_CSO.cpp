@@ -42,13 +42,19 @@ void loop()
       }
 
       if (UserInput == '2'){
-          receiveMessage = ISOBUS.getMessageISOBUS(WBMspeed_PGN, WBMspeed_SPN, spn_buffer);
-          printMessage(receiveMessage, spn_buffer);
+
       }
 
       if (UserInput == '3'){
+          receiveMessage = ISOBUS.getMessageISOBUS(WBSD_TECU_PGN, WheelBasedMachineDirection_SPN, spn_buffer);
+          printMessage(receiveMessage, spn_buffer);
+
+          receiveMessage = ISOBUS.getMessageISOBUS(WBMspeed_PGN, WBMspeed_SPN, spn_buffer);
+          printMessage(receiveMessage, spn_buffer);
+
           receiveMessage = ISOBUS.getMessageISOBUS(NBVehicleSpeed_PGN, NBVehicleSpeed_SPN, spn_buffer);
           printMessage(receiveMessage, spn_buffer);
+
       }
     }  
   }
