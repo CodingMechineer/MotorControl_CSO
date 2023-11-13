@@ -32,9 +32,16 @@ Speed of the vehicle as calculated from a device such as a Global Positioning Sy
 #define NBVS_PGN					65256
 #define NBVS_SPN 	        517
 
-/** PGN 65096 WBSD_TECU */
+/* Vehicle altitude */
+#define NBVS_PGN					65256
+#define NBVS_SPN 	        517
+
+/* PGN 65096 WBSD_TECU */
 #define WBSD_TECU_PGN					65096
 #define WheelBasedMachineDirection_SPN 	1864
+
+#define WBMspeed_PGN 65096
+#define WBMspeed_SPN 1862
 
 #define GBSD_TECU_PGN					65097
 #define FHS_TECU_PGN					65094

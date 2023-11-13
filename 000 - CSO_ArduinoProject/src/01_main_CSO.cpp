@@ -9,8 +9,7 @@ char UserInput;
 
 void printMessage(ISOBUSMessage msg, char buffer[]);
 
-ISOBUSMessage receiveMessage1;
-ISOBUSMessage receiveMessage2;
+ISOBUSMessage receiveMessage;
 
 void setup()
 {
@@ -27,6 +26,7 @@ void setup()
   Serial.println("Please choose a menu option.");
   Serial.println("1 - RPM");
   Serial.println("2 - Speed");
+  Serial.println("3 - Speed 2");
 
 }
 
@@ -38,15 +38,20 @@ void loop()
     /* Receive data if available */
     if (ISOBUS.available()){
       if (UserInput =='1'){
-        receiveMessage1 = ISOBUS.getMessageISOBUS(EEC1_PGN, EngineSpeed_SPN, spn_buffer);
-        printMessage(receiveMessage1, spn_buffer);
-        }
-    }
-    if (UserInput == '2'){
-        receiveMessage2 = ISOBUS.getMessageISOBUS(NBVS_PGN, NBVS_SPN, spn_buffer);
-        printMessage(receiveMessage2, spn_buffer);
-    }
-      
+        receiveMessage = ISOBUS.getMessageISOBUS(EEC1_PGN, EngineSpeed_SPN, spn_buffer);
+        printMessage(receiveMessage, spn_buffer);
+      }
+
+      if (UserInput == '2'){
+          receiveMessage = ISOBUS.getMessageISOBUS(NBVS_PGN, NBVS_SPN, spn_buffer);
+          printMessage(receiveMessage, spn_buffer);
+      }
+
+      if (UserInput == '3'){
+          receiveMessage = ISOBUS.getMessageISOBUS(WBMspeed_PGN, WBMspeed_SPN, spn_buffer);
+          printMessage(receiveMessage, spn_buffer);
+      }
+    }  
   }
 }
 
@@ -65,9 +70,4 @@ void printMessage(ISOBUSMessage msg, char buffer[])
     Serial.print(",");
     Serial.println(buffer);
   }
-
-  if (msg.status == 10){
-    Serial.println("PGN not available");
-  }
-  
 }
