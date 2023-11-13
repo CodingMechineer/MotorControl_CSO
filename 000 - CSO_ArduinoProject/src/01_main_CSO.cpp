@@ -27,7 +27,6 @@ void setup()
   Serial.println("1 - RPM");
   Serial.println("2 - Speed");
   Serial.println("3 - Speed 2");
-
 }
 
 void loop()
@@ -35,20 +34,20 @@ void loop()
   while(Serial.available()){
   UserInput = Serial.read();
 
-    /* Receive data if available */
+    // "EngineSpeed" and "WBMspeed" pre-determined by library
     if (ISOBUS.available()){
-      if (UserInput =='1'){
+      if (UserInput =='1'){ 
         receiveMessage = ISOBUS.getMessageISOBUS(EEC1_PGN, EngineSpeed_SPN, spn_buffer);
         printMessage(receiveMessage, spn_buffer);
       }
 
       if (UserInput == '2'){
-          receiveMessage = ISOBUS.getMessageISOBUS(NBVS_PGN, NBVS_SPN, spn_buffer);
+          receiveMessage = ISOBUS.getMessageISOBUS(WBMspeed_PGN, WBMspeed_SPN, spn_buffer);
           printMessage(receiveMessage, spn_buffer);
       }
 
       if (UserInput == '3'){
-          receiveMessage = ISOBUS.getMessageISOBUS(WBMspeed_PGN, WBMspeed_SPN, spn_buffer);
+          receiveMessage = ISOBUS.getMessageISOBUS(NBVehicleSpeed_PGN, NBVehicleSpeed_SPN, spn_buffer);
           printMessage(receiveMessage, spn_buffer);
       }
     }  

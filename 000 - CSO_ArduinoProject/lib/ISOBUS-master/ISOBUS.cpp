@@ -230,8 +230,31 @@ ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, cha
 							sprintf(spn_buffer,"%d Direction ",(int) i.spn_data);
 							i.status = 0;
 						}
-					break;					
+					break;
+
+					case NBVehicleSpeed_PGN:
+						if (NBVehicleSpeed_SPN == spn) /* Navigation based vehicle speed */
+						{	
+                            Serial.println("Navigation based vehicle speed received");
+                            Serial.println(i.extended);
+                            Serial.println(i.id);
+                            Serial.println(i.len);
+
+                            // Print the elements of the array
+                            Serial.print("Array data: ");
+                            for (unsigned long long c = 0; c < sizeof(i.data); ++c) {
+                                Serial.print(i.data[c]);
+                                Serial.print(" ");
+                            }
+                            Serial.println();                         
+							// i.spn_data = (i.data[7] >> 0x00) & 0x3;
+							// /*0=Reverse, 1=Forward, 2=ErrorIndicator, 3=NotAvailable */
+							// sprintf(spn_buffer,"%d Direction ",(int) i.spn_data);
+							// i.status = 0;
+						}
+					break;			
 					}
+                    
 			}
 			else 
 			{

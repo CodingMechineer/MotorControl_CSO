@@ -9,12 +9,6 @@
 			"path": "100 - BAT_ArduinoIO"
 		},
 		{
-			"path": "J1939_Request_Message"
-		},
-		{
-			"path": "MCP_CAN_lib-master"
-		},
-		{
 			"path": "ISOBUS-master"
 		}
 	],
