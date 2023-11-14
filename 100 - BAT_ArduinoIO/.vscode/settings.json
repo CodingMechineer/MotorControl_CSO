@@ -1,4 +1,5 @@
 {
     "C_Cpp.errorSquiggles": "disabled",
-    "cmake.configureOnOpen": true
+    "cmake.configureOnOpen": true,
+    "cmake.sourceDirectory": "C:/Users/manue/OneDrive - University of Georgia/100 - Corn_seed_orientation/100 - GitHub_MotorControl_CSO/100 - BAT_ArduinoIO/.pio/libdeps/uno/Unity"
 }

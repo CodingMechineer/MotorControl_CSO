@@ -203,7 +203,7 @@ ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, cha
 	ISOBUSMessage i;
     
     // Debugging
-    // Serial.print("Debug: "); Serial.println(i.pgn);
+    Serial.print("Received PGN: "); Serial.println(i.pgn);
 	
 	if (mcp2515_msg_received())
 	{
@@ -245,7 +245,7 @@ ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, cha
                             // Print the elements of the array
                             Serial.print("Array data: ");
                             for (int c = 0; c < int(sizeof(i.data)); ++c) {
-                                Serial.print(i.data[c]);
+                                Serial.print(i.data[c], BIN);
                                 Serial.print(" ");
                             }
                             Serial.println();  
@@ -254,7 +254,7 @@ ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, cha
 
 					case NBVehicleSpeed_PGN:
                             Serial.println("Entered");
-						if (WBMspeed_SPN == spn) /* Navigation based vehicle speed */
+						if (NBVehicleSpeed_SPN == spn) /* Navigation based vehicle speed */
 						{	
                             Serial.println("Navigation based vehicle speed received");
                             Serial.println(i.extended);
@@ -263,8 +263,8 @@ ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, cha
 
                             // Print the elements of the array
                             Serial.print("Array data: ");
-                            for (unsigned long long c = 0; c < sizeof(i.data); ++c) {
-                                Serial.print(i.data[c]);
+                            for (int c = 0; c < int(sizeof(i.data)); ++c) {
+                                Serial.print(i.data[c],BIN);
                                 Serial.print(" ");
                             }
                             Serial.println();                         
