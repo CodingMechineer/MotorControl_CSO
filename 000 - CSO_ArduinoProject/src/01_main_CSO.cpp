@@ -33,9 +33,11 @@ void loop()
 {
   while(Serial.available()){
   UserInput = Serial.read();
+  // UserInput = 1;
 
     // "EngineSpeed" and "WBMspeed" pre-determined by library
     if (ISOBUS.available()){
+
       if (UserInput =='1'){ 
         receiveMessage = ISOBUS.getMessageISOBUS(EEC1_PGN, EngineSpeed_SPN, spn_buffer);
         printMessage(receiveMessage, spn_buffer);
@@ -54,7 +56,6 @@ void loop()
 
           receiveMessage = ISOBUS.getMessageISOBUS(NBVehicleSpeed_PGN, NBVehicleSpeed_SPN, spn_buffer);
           printMessage(receiveMessage, spn_buffer);
-
       }
     }  
   }

@@ -203,7 +203,7 @@ ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, cha
 	ISOBUSMessage i;
     
     // Debugging
-    Serial.print("Received PGN: "); Serial.println(i.pgn);
+    // Serial.print("Received PGN: "); Serial.println(i.pgn);
 	
 	if (mcp2515_msg_received())
 	{
@@ -219,6 +219,23 @@ ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, cha
 					case EEC1_PGN:
 						if (EngineSpeed_SPN == spn) /* Engine Speed (RPM), SPN: 190, Start position: 3, Length 2 bytes*/
 						{
+                            Serial.println("\n");
+                            // Print the elements of the array in hex
+                            Serial.print("Array data: ");
+                            for (int c = 0; c < int(sizeof(i.data)); ++c) {
+                                Serial.print(i.data[c],HEX);
+                                Serial.print(" ");
+                            }
+                            Serial.println();
+
+                            // Print the elements of the array in decimal
+                            Serial.print("Array data: ");
+                            for (int c = 0; c < int(sizeof(i.data)); ++c) {
+                                Serial.print(i.data[c],DEC);
+                                Serial.print(" ");
+                            }
+                            Serial.println();
+
 							i.spn_data = ((i.data[4]*256) + i.data[3])*0.125; 
 							sprintf(spn_buffer,"%d RPM ",(int) i.spn_data);
 							i.status = 0;
@@ -242,32 +259,55 @@ ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, cha
                             Serial.println(i.id);
                             Serial.println(i.len);
 
-                            // Print the elements of the array
+                            // Print the elements of the array binary
                             Serial.print("Array data: ");
                             for (int c = 0; c < int(sizeof(i.data)); ++c) {
                                 Serial.print(i.data[c], BIN);
                                 Serial.print(" ");
                             }
-                            Serial.println();  
+                            Serial.println();
                         }
 					break;
 
 					case NBVehicleSpeed_PGN:
                             Serial.println("Entered");
+                            
+                            // int speedRange = 250.996; // km/h
+                            float speedRes = 0.00390625; // 1/256; // km/h per bit
+                            float a = 12.0;
+                            float b = 0.0;
+                            float test = 5;
+                            float speed = 0;
+                            
 						if (NBVehicleSpeed_SPN == spn) /* Navigation based vehicle speed */
 						{	
                             Serial.println("Navigation based vehicle speed received");
-                            Serial.println(i.extended);
-                            Serial.println(i.id);
-                            Serial.println(i.len);
+                            
+                            // Serial.println(i.extended);
+                            // Serial.println(i.id);
+                            // Serial.println(i.len);
 
                             // Print the elements of the array
                             Serial.print("Array data: ");
                             for (int c = 0; c < int(sizeof(i.data)); ++c) {
-                                Serial.print(i.data[c],BIN);
+                                Serial.print(i.data[c], DEC);
                                 Serial.print(" ");
                             }
-                            Serial.println();                         
+                            Serial.println();
+
+                            Serial.print("DEC 2&3: ");
+                            Serial.print(i.data[2], DEC); Serial.print(" "); Serial.println(i.data[3], DEC);
+
+							speed = ((i.data[3]*256) + i.data[2]) * speedRes; 
+							
+                            test = (b * 256 + a) * 1000;
+                            Serial.println(test);
+
+                            Serial.print("Speed: "); Serial.print(speed); Serial.println(" km/h");
+                            
+                            // sprintf(spn_buffer,"%d km/h ",(int) i.spn_data);
+							// i.status = 0;
+                      
 							// i.spn_data = (i.data[7] >> 0x00) & 0x3;
 							// /*0=Reverse, 1=Forward, 2=ErrorIndicator, 3=NotAvailable */
 							// sprintf(spn_buffer,"%d Direction ",(int) i.spn_data);
