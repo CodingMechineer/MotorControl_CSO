@@ -12,6 +12,7 @@
 #include "ISOBUS.h"
 #include <SPI.h>
 
+
 CanMessage::CanMessage ()
 {
     extended = 0;
@@ -212,109 +213,56 @@ ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, cha
 		/* Determine the PGN (PDU2 format) based on CAN ID */
 		i.pgn = (i.id >> ISOBUS_PGN_POS) & ISOBUS_PGN_MASK;
 			
-			if (i.pgn == pgn)
+            Serial.println(i.pgn); // Debugging
+			
+            if (i.pgn == pgn)
 			{
 				switch(i.pgn)
 					{   /* Details from SAE J1939-71 JAN2008 */
 					case EEC1_PGN:
 						if (EngineSpeed_SPN == spn) /* Engine Speed (RPM), SPN: 190, Start position: 3, Length 2 bytes*/
 						{
-                            Serial.println("\n");
-                            // Print the elements of the array in hex
-                            Serial.print("Array data: ");
-                            for (int c = 0; c < int(sizeof(i.data)); ++c) {
-                                Serial.print(i.data[c],HEX);
-                                Serial.print(" ");
-                            }
-                            Serial.println();
-
-                            // Print the elements of the array in decimal
-                            Serial.print("Array data: ");
-                            for (int c = 0; c < int(sizeof(i.data)); ++c) {
-                                Serial.print(i.data[c],DEC);
-                                Serial.print(" ");
-                            }
-                            Serial.println();
-
-							i.spn_data = ((i.data[4]*256) + i.data[3])*0.125; 
+							i.spn_data = ((i.data[4]*256) + i.data[3])*0.125;
 							sprintf(spn_buffer,"%d RPM ",(int) i.spn_data);
 							i.status = 0;
+
+                            // // TESTING
+                            // float test = 5.5;
+                            // char str_temp[6];
+                            // dtostrf(test, 4, 1, str_temp);
+                            // sprintf(spn_buffer,"%s km/h ", str_temp);
 						}
 					break;
 					
 					case WBSD_TECU_PGN:
 						if (WheelBasedMachineDirection_SPN == spn) /* Wheel based direction (enum), SPN: , Start position: 2, Lenght 4 bytes*/
 						{	
-                            Serial.println("WheelBasedMachineDirection_SPN received");			
 							i.spn_data = (i.data[7] >> 0x00) & 0x3;
 							/*0=Reverse, 1=Forward, 2=ErrorIndicator, 3=NotAvailable */
 							sprintf(spn_buffer,"%d Direction ",(int) i.spn_data);
 							i.status = 0;
 						}
-
-                        if (WBMspeed_SPN == spn)
-                        {
-                            Serial.println("WBMspeed_SPN received");
-                            Serial.println(i.extended);
-                            Serial.println(i.id);
-                            Serial.println(i.len);
-
-                            // Print the elements of the array binary
-                            Serial.print("Array data: ");
-                            for (int c = 0; c < int(sizeof(i.data)); ++c) {
-                                Serial.print(i.data[c], BIN);
-                                Serial.print(" ");
-                            }
-                            Serial.println();
-                        }
 					break;
 
 					case NBVehicleSpeed_PGN:
-                            Serial.println("Entered");
-                            
-                            // int speedRange = 250.996; // km/h
-                            float speedRes = 0.00390625; // 1/256; // km/h per bit
-                            float a = 12.0;
-                            float b = 0.0;
-                            float test = 5;
-                            float speed = 0;
+                           
+                        float speedRes = 0.00390625; // 1/256; // km/h per bit
+                        float speed = 0;
+                        char str_temp[6];
+                        int trFactor = 10;
                             
 						if (NBVehicleSpeed_SPN == spn) /* Navigation based vehicle speed */
 						{	
-                            Serial.println("Navigation based vehicle speed received");
-                            
-                            // Serial.println(i.extended);
-                            // Serial.println(i.id);
-                            // Serial.println(i.len);
-
-                            // Print the elements of the array
-                            Serial.print("Array data: ");
-                            for (int c = 0; c < int(sizeof(i.data)); ++c) {
-                                Serial.print(i.data[c], DEC);
-                                Serial.print(" ");
-                            }
-                            Serial.println();
-
-                            Serial.print("DEC 2&3: ");
-                            Serial.print(i.data[2], DEC); Serial.print(" "); Serial.println(i.data[3], DEC);
-
-							speed = ((i.data[3]*256) + i.data[2]) * speedRes; 
+                            Serial.println("Navigation based vehicle speed received");                          
 							
-                            test = (b * 256 + a) * 1000;
-                            Serial.println(test);
+                            speed = ((i.data[3]*256) + i.data[2]) * speedRes;
+                            speed = 69.9; // FOR TESTING                       
+                            dtostrf(speed, 4, 1, str_temp);
+                            sprintf(spn_buffer,"%s km/h ", str_temp);
 
-                            Serial.print("Speed: "); Serial.print(speed); Serial.println(" km/h");
-                            
-                            // sprintf(spn_buffer,"%d km/h ",(int) i.spn_data);
-							// i.status = 0;
-                      
-							// i.spn_data = (i.data[7] >> 0x00) & 0x3;
-							// /*0=Reverse, 1=Forward, 2=ErrorIndicator, 3=NotAvailable */
-							// sprintf(spn_buffer,"%d Direction ",(int) i.spn_data);
-							// i.status = 0;
+                            i.spn_data = speed * trFactor;
+							i.status = 0;
 						}
-
-
 					break;			
 					}
                     

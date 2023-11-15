@@ -48,14 +48,13 @@ void loop()
       }
 
       if (UserInput == '3'){
-          // receiveMessage = ISOBUS.getMessageISOBUS(WBSD_TECU_PGN, WheelBasedMachineDirection_SPN, spn_buffer);
-          // printMessage(receiveMessage, spn_buffer);
-
-          // receiveMessage = ISOBUS.getMessageISOBUS(WBMspeed_PGN, WBMspeed_SPN, spn_buffer);
-          // printMessage(receiveMessage, spn_buffer);
-
           receiveMessage = ISOBUS.getMessageISOBUS(NBVehicleSpeed_PGN, NBVehicleSpeed_SPN, spn_buffer);
           printMessage(receiveMessage, spn_buffer);
+          
+          if(receiveMessage.spn_data != 0){
+          int trFactor = 10;
+          Serial.println(float(receiveMessage.spn_data)/trFactor); // transmit speed without float variable
+          }
       }
     }  
   }
