@@ -34,7 +34,7 @@ void loop()
     // "EngineSpeed" and "WBMspeed" pre-determined by library
     if (ISOBUS.available()){
 
-      if (UserInput =='1'){ 
+      if (UserInput =='1'){
         receiveMessage = ISOBUS.getMessageISOBUS(EEC1_PGN, EngineSpeed_SPN, spn_buffer);
         printMessage(receiveMessage, spn_buffer);
       }
