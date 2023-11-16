@@ -18,7 +18,8 @@
 
 
 #if ARDUINO
-const int slaveSelectPin = 10;
+// const int slaveSelectPin = 10;  // Arduino UNO
+const int slaveSelectPin = 53;  // Arduino MEGA
 
 /** Assert the slave select signal */
 static inline void assert_ss (void)

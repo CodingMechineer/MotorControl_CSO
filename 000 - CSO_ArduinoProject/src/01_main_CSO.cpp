@@ -17,10 +17,6 @@ void setup()
   ISOBUS.setMode (CAN_MODE_NORMAL);
   Serial.begin(115200);
 
-  // initialize digital pin 2 and 3 as an output.
-  pinMode(2, OUTPUT);
-  pinMode(3, OUTPUT);
-
   delay(1000);
 
   Serial.println("Please choose a menu option.");
