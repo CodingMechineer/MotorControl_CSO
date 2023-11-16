@@ -4,12 +4,21 @@
 #include <SPI.h>
 #include <ISOBUS.h>
 
-char spn_buffer[512];  //Data will be temporarily stored to this buffer before being written to the filechar buffer[512];  //Data will be temporarily stored to this buffer before being written to the file
-char UserInput;
+#include "SevSeg.h"
 
+/* Initialize functions*/
 void printMessage(ISOBUSMessage msg, char buffer[]);
+int getPoti(int poti);
+int floatFact = 10;
 
-ISOBUSMessage receiveMessage;
+
+/* Variables */
+ISOBUSMessage receiveMessage; // Instantiate ISOBUS
+char spn_buffer[512];  // Data will be temporarily stored to this buffer before being written to the filechar buffer[512];  //Data will be temporarily stored to this buffer before being written to the file
+int UserInput = 0; // Variable for input with keyboard
+
+SevSeg sevseg; // Instantiate a seven segment object
+
 
 void setup()
 {
@@ -17,16 +26,39 @@ void setup()
   ISOBUS.setMode (CAN_MODE_NORMAL);
   Serial.begin(115200);
 
+  pinMode(PotiInput, INPUT);
+
+
   delay(1000);
 
   Serial.println("Please choose a menu option.");
   Serial.println("1 - RPM");
   Serial.println("2 - Speed");
   Serial.println("3 - Speed 2");
+
+
+  /* Setup for 7-segment */
+  byte numDigits = 4;
+  byte digitPins[] = {2, 3, 4, 5};
+  byte segmentPins[] = {11, 13, 9, 7, 6, 12, 10, 8};
+  bool resistorsOnSegments = false; // 'false' means resistors are on digit pins
+  byte hardwareConfig = COMMON_CATHODE; // See README.md for options
+  bool updateWithDelays = false; // Default 'false' is Recommended
+  bool leadingZeros = false; // Use 'true' if you'd like to keep the leading zeros
+  bool disableDecPoint = false; // Use 'true' if your decimal point doesn't exist or isn't connected. Then, you only need to specify 7 segmentPins[]
+
+  sevseg.begin(hardwareConfig, numDigits, digitPins, segmentPins, resistorsOnSegments,
+  updateWithDelays, leadingZeros, disableDecPoint);
+  sevseg.setBrightness(90);
+
+  
+
 }
 
 void loop()
 {
+  sevseg.refreshDisplay(); // Must run repeatedly
+  
   while(Serial.available()){
   UserInput = Serial.read();
   // UserInput = 1;
@@ -37,10 +69,15 @@ void loop()
       if (UserInput =='1'){
         receiveMessage = ISOBUS.getMessageISOBUS(EEC1_PGN, EngineSpeed_SPN, spn_buffer);
         printMessage(receiveMessage, spn_buffer);
+        
+        if (receiveMessage.spn_data != 0)
+          sevseg.setNumber(receiveMessage.spn_data, 0);
       }
 
       if (UserInput == '2'){
-
+        int potiVal = 0; 
+        potiVal = getPoti(PotiInput);
+        sevseg.setNumberF(float(potiVal)/floatFact, 1);
       }
 
       if (UserInput == '3'){
@@ -48,8 +85,9 @@ void loop()
           printMessage(receiveMessage, spn_buffer);
           
           if(receiveMessage.spn_data != 0){
-          int trFactor = 10;
-          Serial.println(float(receiveMessage.spn_data)/trFactor); // transmit speed without float variable
+            int trFactor = 10;
+            Serial.println(float(receiveMessage.spn_data)/trFactor); // transmit speed without float variable
+            sevseg.setNumber(receiveMessage.spn_data, 1);            
           }
       }
     }  
@@ -72,3 +110,19 @@ void printMessage(ISOBUSMessage msg, char buffer[])
     Serial.println(buffer);
   }
 }
+
+
+int getPoti(int poti){
+  const int potiMin = 900;
+  const int potiMax = 1100;
+
+  // Read the potentiometer value
+  int potValue = analogRead(poti);
+  Serial.println(potValue);
+
+  // Map the potentiometer value to the servo range
+  int potiValue = map(potValue, 0, 1023, potiMin, potiMax);
+  
+  return potiValue;
+}
+
