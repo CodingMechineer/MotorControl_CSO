@@ -256,7 +256,7 @@ ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, cha
                             Serial.println("Navigation based vehicle speed received");                          
 							
                             speed = ((i.data[3]*256) + i.data[2]) * speedRes;
-                            speed = 69.9; // FOR TESTING                       
+                            // speed = 69.9; // FOR TESTING                       
                             dtostrf(speed, 4, 1, str_temp);
                             sprintf(spn_buffer,"%s km/h ", str_temp);
 

@@ -75,8 +75,7 @@ void loop()
       }
 
       if (UserInput == '2'){
-        int potiVal = 0; 
-        potiVal = getPoti(PotiInput);
+        int potiVal = getPoti(PotiInput);
         sevseg.setNumberF(float(potiVal)/floatFact, 1);
       }
 
@@ -118,7 +117,6 @@ int getPoti(int poti){
 
   // Read the potentiometer value
   int potValue = analogRead(poti);
-  Serial.println(potValue);
 
   // Map the potentiometer value to the servo range
   int potiValue = map(potValue, 0, 1023, potiMin, potiMax);
