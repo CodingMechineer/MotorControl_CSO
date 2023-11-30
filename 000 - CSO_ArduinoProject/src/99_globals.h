@@ -3,7 +3,12 @@
 
 #define SERIAL_SPEED 115200
 
-const int PotiInput = A0;
-const int 
+#define PotiInput A0
+
+#define driverPUL 23
+#define driverDIR 24
+
+int pd = 500;
+boolean setdir = LOW;
 
 #endif

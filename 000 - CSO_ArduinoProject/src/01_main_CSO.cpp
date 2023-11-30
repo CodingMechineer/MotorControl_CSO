@@ -4,12 +4,16 @@
 #include <SPI.h>
 #include <ISOBUS.h>
 
+#include <AccelStepper.h>
+
 #include "SevSeg.h"
+
+int floatFact = 10;
 
 /* Initialize functions*/
 void printMessage(ISOBUSMessage msg, char buffer[]);
 int getPoti(int poti);
-int floatFact = 10;
+void motorTest();
 
 
 /* Variables */
@@ -19,6 +23,7 @@ int UserInput = 0; // Variable for input with keyboard
 
 SevSeg sevseg; // Instantiate a seven segment object
 
+AccelStepper stepper(1,driverPUL,driverDIR); // first number is the type of stepper, PUL output, DIR output
 
 void setup()
 {
@@ -51,13 +56,24 @@ void setup()
   updateWithDelays, leadingZeros, disableDecPoint);
   sevseg.setBrightness(90);
 
-  
+  /* Setup for driver control */
+  pinMode(driverPUL, OUTPUT);
+  pinMode(driverDIR, OUTPUT);
 
+  stepper.setMaxSpeed(200);
 }
 
 void loop()
 {
   sevseg.refreshDisplay(); // Must run repeatedly
+  
+  sevseg.setNumber(6, 0);
+  
+  // motorTest();
+  stepper.setSpeed(getPoti(PotiInput));
+  stepper.runSpeed();
+
+
   
   while(Serial.available()){
   UserInput = Serial.read();
@@ -112,8 +128,8 @@ void printMessage(ISOBUSMessage msg, char buffer[])
 
 
 int getPoti(int poti){
-  const int potiMin = 900;
-  const int potiMax = 1100;
+  const int potiMin = 0;
+  const int potiMax = 1000;
 
   // Read the potentiometer value
   int potValue = analogRead(poti);
@@ -124,3 +140,13 @@ int getPoti(int poti){
   return potiValue;
 }
 
+
+void motorTest(){
+  pd = map((analogRead(PotiInput)),0,1023,2000,0);
+  digitalWrite(driverDIR, setdir);
+  digitalWrite(driverPUL, HIGH);
+  delayMicroseconds(pd);
+  digitalWrite(driverPUL, LOW);
+  delayMicroseconds(pd);
+
+}
