@@ -1,11 +1,15 @@
 #ifndef POTI_H
 #define POTI_H
 
-#define PotiInput A0
+/* Poti to adjust the percentage of the speed - Target speed 1 mph*/
+#define potiAdjSpeed A0 
 
-/* Initialize functions */
+// Poti to simulate the speed from the ISOBUS
+#define potiSim A1
 
-/* Input pin from the Arduino, minimal returned value, maximal returned value */ 
-int getPotiMap(int inputPin, int minVal, int maxVal); 
+/* Maps the poti input between the two values */ 
+float getPotiMap(int inputPin, int minVal, int maxVal);
+
+bool delayTimeExpired(int delayTime);
 
 #endif

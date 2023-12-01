@@ -11,6 +11,7 @@ const int floatFact = 10;
 
 int UserInput = 0; // Variable for input with keyboard
 char spn_buffer[512];  // Data will be temporarily stored to this buffer before being written to the filechar buffer[512];  //Data will be temporarily stored to this buffer before being written to the file
+char debugMessage[50];
 
 /* Adjustable percentage range */
 int minPercent = 95;
@@ -39,12 +40,13 @@ void setup()
   sevseg.setBrightness(90);
   
   /* Setup for poti */
-  pinMode(PotiInput, INPUT);
+  pinMode(potiAdjSpeed, INPUT);
 
   /* Setup for stepper */
   pinMode(driverPUL, OUTPUT);
   pinMode(driverDIR, OUTPUT);
-  stepper.setMaxSpeed(200);
+  stepper.setMaxSpeed(1000);
+  stepper.setSpeed(500.96);
 
   delay(1000);
 
@@ -56,15 +58,54 @@ void setup()
 
 void loop()
 {
-  sevseg.refreshDisplay(); // Must run repeatedly
-  sevseg.setNumber(6, 0);
-  
+  /* Calculations to convert the speed signal to required rounds per minute */
+  float simSpeedSignal = float(getPotiMap(potiSim, 5, 15))/floatFact; // Values "simulate" speed between the values
+  float effSpeedMS = mphToMs(simSpeedSignal);
+  float adjPerc = float(getPotiMap(potiAdjSpeed, 950, 1050)/floatFact); // Adjust the speed between 95% and 105% 
+  float adjSpeedMS = adjPotiSpeed(effSpeedMS, adjPerc); 
+  float reqMotRPM = reqRPM(adjSpeedMS, seedWheelDia);
+  float reqPPS = RPMtoPPS(reqMotRPM, pulsePerRev);
 
-  // motorTest();
-  stepper.setSpeed(getPotiMap(PotiInput, 0, 1000));
+  // /* Debug the speed calculations */
+  // int str = 10;
+  // char str_simSpeedSignal[str];
+  // char str_effSpeedMS[str];
+  // char str_adjSpeedMS[str];
+  // char str_reqMotRPM[str];
+  // char str_reqPPS[str];
+
+  // dtostrf(simSpeedSignal, 3, 1, str_simSpeedSignal);
+  // dtostrf(effSpeedMS, 3, 1, str_effSpeedMS);
+  // dtostrf(adjSpeedMS, 3, 1, str_adjSpeedMS);
+  // dtostrf(reqMotRPM, 3, 1, str_reqMotRPM);
+  // dtostrf(reqPPS, 3, 1, str_reqPPS);
+
+  // sprintf(debugMessage, "SpeedMPH: %s mph, SpeedMS: %s m/s, AdjSpeedMS: %s, reqMotRPM: %s, reqPPS: %s",
+  // str_simSpeedSignal, str_effSpeedMS, str_adjSpeedMS, str_reqMotRPM, str_reqPPS);
+  // Serial.println(debugMessage);
+
+
+
+  // Serial.println("---------------");
+  // Serial.println(simSpeedSignal);
+  // Serial.println(adjSpeedMS);
+  if (delayTimeExpired(1000) == true){
+    Serial.println(reqMotRPM);
+  }
+  // Serial.println(reqPPS);
+  // delay(1000);
+
+
+
+  /* Set the speed of the motor*/
+  stepper.setSpeed(reqPPS);
   stepper.runSpeed();
 
-  
+
+  /* Updates the display */
+  sevseg.refreshDisplay(); // Must run repeatedly
+  sevseg.setNumberF(adjPerc, 1);
+ 
   while(Serial.available()){
   UserInput = Serial.read();
   // UserInput = 1;
@@ -81,7 +122,7 @@ void loop()
       }
 
       if (UserInput == '2'){
-        int potiVal = getPotiMap(PotiInput, minPercent, maxPercent);
+        int potiVal = getPotiMap(potiAdjSpeed, minPercent, maxPercent);
         sevseg.setNumberF(float(potiVal)/floatFact, 1);
       }
 
