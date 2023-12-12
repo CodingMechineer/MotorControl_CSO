@@ -41,6 +41,8 @@ void setup()
   
   /* Setup for poti */
   pinMode(potiAdjSpeed, INPUT);
+  pinMode(potiPower, OUTPUT);
+  digitalWrite(potiPower, HIGH); // Output used as power supply for the poti
 
   /* Setup for stepper */
   pinMode(driverPUL, OUTPUT);
@@ -59,8 +61,8 @@ void setup()
 void loop()
 {
   /* Calculations to convert the speed signal to required rounds per minute */
-  float simSpeedSignal = float(getPotiMap(potiSim, 5, 15))/floatFact; // Values "simulate" speed between the values
-  float effSpeedMS = mphToMs(simSpeedSignal);
+  float SpeedSignal = float(getPotiMap(potiSim, 5, 15))/floatFact; // Values "simulate" speed between the values
+  float effSpeedMS = mphToMs(SpeedSignal);
   float adjPerc = float(getPotiMap(potiAdjSpeed, 950, 1050)/floatFact); // Adjust the speed between 95% and 105% 
   float adjSpeedMS = adjPotiSpeed(effSpeedMS, adjPerc); 
   float reqMotRPM = reqRPM(adjSpeedMS, seedWheelDia);
@@ -90,12 +92,10 @@ void loop()
   // Serial.println(simSpeedSignal);
   // Serial.println(adjSpeedMS);
   if (delayTimeExpired(1000) == true){
+    Serial.println(SpeedSignal);
+    Serial.println(adjPerc);
     Serial.println(reqMotRPM);
   }
-  // Serial.println(reqPPS);
-  // delay(1000);
-
-
 
   /* Set the speed of the motor*/
   stepper.setSpeed(reqPPS);
