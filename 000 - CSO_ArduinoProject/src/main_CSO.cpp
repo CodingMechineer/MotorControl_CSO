@@ -5,6 +5,11 @@
 #include "Header_Files/isobus_var.h"
 #include "Header_Files/poti.h"
 
+
+
+
+
+
 /* Variables */
 #define SERIAL_SPEED 115200
 const int floatFact = 10;
@@ -57,52 +62,35 @@ void setup()
 
 void loop()
 {
+
+  /* Debugging with number one to print engine RPM */
+  UserInput = Serial.read();
+  receiveMessage = ISOBUS.getMessageISOBUS(EEC1_PGN, EngineSpeed_SPN, spn_buffer);
+  if (UserInput =='1'){
+    printMessage(receiveMessage, spn_buffer);
+    
+    if (receiveMessage.spn_data != 0)
+      sevseg.setNumber(receiveMessage.spn_data, 0);
+  }
+ 
   /* Reading of the ISOBUS from the tractor*/
-
-  // "EngineSpeed" and "WBMspeed" pre-determined by library
-  // if (ISOBUS.available()){
-  //   UserInput = Serial.read();
-
-  //   if (delayTimeExpired(1000) == true){
-  //     Serial.println("ISOBUS available");
-  //   }
-
-    UserInput = Serial.read();
-    receiveMessage = ISOBUS.getMessageISOBUS(EEC1_PGN, EngineSpeed_SPN, spn_buffer);
-    if (UserInput =='1'){
-      printMessage(receiveMessage, spn_buffer);
-      
-      if (receiveMessage.spn_data != 0)
-        sevseg.setNumber(receiveMessage.spn_data, 0);
-    }
-
-    /* Navigation based vehicle speed */
-    receiveMessage = ISOBUS.getMessageISOBUS(NBVehicleSpeed_PGN, NBVehicleSpeed_SPN, spn_buffer);
-    if (receiveMessage.pgn == NBVehicleSpeed_PGN){
-        
-          printMessage(receiveMessage, spn_buffer);
-          Serial.println(float(receiveMessage.spn_data)/floatFact); // transmit speed without float variable
-          sevseg.setNumber(receiveMessage.spn_data, 1);            
-    }
-  // }
-  
+  receiveMessage = ISOBUS.getMessageISOBUS(NBVehicleSpeed_PGN, NBVehicleSpeed_SPN, spn_buffer);
 
   /* Calculations to convert the speed signal to required rounds per minute */
-  float SpeedSignal = float(getPotiMap(potiSim, 5, 15))/floatFact; // Values "simulate" speed between the values
+  // float SpeedSignal = float(getPotiMap(potiSim, 5, 15))/floatFact; // Values "simulate" speed between the values
+  float SpeedSignal = float(receiveMessage.spn_data)/floatFact; // Values "simulate" speed between the values
   float effSpeedMS = mphToMs(SpeedSignal);
   float adjPerc = float(getPotiMap(potiAdjSpeed, 950, 1050)/floatFact); // Adjust the speed between 95% and 105% 
   float adjSpeedMS = adjPotiSpeed(effSpeedMS, adjPerc); 
   float reqMotRPM = reqRPM(adjSpeedMS, seedWheelDia);
   float reqPPS = RPMtoPPS(reqMotRPM, pulsePerRev);
 
-  // Serial.println("---------------");
-  // Serial.println(simSpeedSignal);
-  // Serial.println(adjSpeedMS);
-  if (delayTimeExpired(1000) == true){
-    Serial.println(SpeedSignal);
-    Serial.println(adjPerc);
-    Serial.println(reqMotRPM);
-  }
+  /* Debugging */
+  // if (delayTimeExpired(1000) == true){
+  //   Serial.println(SpeedSignal);
+  //   Serial.println(adjPerc);
+  //   Serial.println(reqMotRPM);
+  // }
 
   /* Set the speed of the motor*/
   stepper.setSpeed(reqPPS);

@@ -213,7 +213,7 @@ ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, cha
 		/* Determine the PGN (PDU2 format) based on CAN ID */
 		i.pgn = (i.id >> ISOBUS_PGN_POS) & ISOBUS_PGN_MASK;
 			
-            Serial.println(i.pgn); // Debugging
+            // Serial.println(i.pgn); // Debugging
 			
             if (i.pgn == pgn)
 			{
@@ -253,7 +253,8 @@ ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, cha
                             
 						if (NBVehicleSpeed_SPN == spn) /* Navigation based vehicle speed */
 						{	
-                            Serial.println("Navigation based vehicle speed received");                          
+                            /* Debugging */
+                            // Serial.println("Navigation based vehicle speed received");                          
 							
                             speed = ((i.data[3]*256) + i.data[2]) * speedRes;
                             // speed = 69.9; // FOR TESTING                       
