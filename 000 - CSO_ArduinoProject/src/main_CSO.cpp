@@ -5,13 +5,8 @@
 #include "Header_Files/isobus_var.h"
 #include "Header_Files/poti.h"
 
-
-
-
-
-
 /* Variables */
-#define SERIAL_SPEED 115200
+#define SERIAL_SPEED 9600 // 115200
 const int floatFact = 10;
 
 int UserInput = 0; // Variable for input with keyboard
@@ -24,6 +19,7 @@ int maxPercent = 105;
 
 /* Instantiate seven segment display */
 SevSeg sevseg;
+ModbusMaster node;
 
 /* Instantiate ISOBUS */
 ISOBUSMessage receiveMessage; 
@@ -34,7 +30,7 @@ AccelStepper stepper(1,driverPUL,driverDIR); // first number is the type of step
 void setup()
 {
   /* Initialize arduino communication*/
-  Serial.begin(115200);
+  Serial.begin(SERIAL_SPEED);
 
   /* Initialize ISOBUS communication */
   ISOBUS.begin(CAN_SPEED_250000);
@@ -43,6 +39,8 @@ void setup()
   /* Initialize display */
   sevseg.begin(hardwareConfig, numDigits, digitPins, segmentPins, resistorsOnSegments, updateWithDelays, leadingZeros, disableDecPoint);
   sevseg.setBrightness(90);
+
+  node.begin(MODBUS_SLAVE_ID, Serial);
   
   /* Setup for poti */
   pinMode(potiAdjSpeed, INPUT);
@@ -68,6 +66,7 @@ void loop()
   receiveMessage = ISOBUS.getMessageISOBUS(EEC1_PGN, EngineSpeed_SPN, spn_buffer);
   if (UserInput =='1'){
     printMessage(receiveMessage, spn_buffer);
+    node.writeSingleRegister(DISPLAY_NUMBER, float(receiveMessage.spn_data)/floatFact);  // Adjust the value as needed
     
     if (receiveMessage.spn_data != 0)
       sevseg.setNumber(receiveMessage.spn_data, 0);
@@ -99,5 +98,9 @@ void loop()
   /* Updates the display */
   sevseg.refreshDisplay(); // Must run repeatedly
   sevseg.setNumberF(adjPerc, 1);
-}
 
+  // Send MODBUS command to update the display
+  node.writeSingleRegister(DISPLAY_NUMBER, adjPerc*floatFact);  // Adjust the value as needed
+  node.writeSingleRegister(DISPLAY_COMMA, 1); // comma after the "number" digit, DISPLAY_COMMA ist the address 
+  
+}
