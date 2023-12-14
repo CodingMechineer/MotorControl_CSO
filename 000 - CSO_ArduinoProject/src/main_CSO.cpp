@@ -63,7 +63,7 @@ void setup()
   /* Setup for stepper */
   pinMode(driverPUL, OUTPUT);
   pinMode(driverDIR, OUTPUT);
-  stepper.setMaxSpeed(1000);
+  stepper.setMaxSpeed(2000);
   stepper.setSpeed(0);
 
   delay(1000);
