@@ -1,8 +1,8 @@
 #include "Header_Files/stepper.h"
 
-float mphToMs(float speed_mph){
-    float convVal = 2.237;
-    float speed_ms = speed_mph / convVal;
+float kmhToMs(float speed_kmh){
+    float convVal = 3.6;
+    float speed_ms = speed_kmh / convVal;
     return speed_ms;
 }
 

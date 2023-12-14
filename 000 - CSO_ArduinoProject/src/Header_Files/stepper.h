@@ -1,5 +1,5 @@
-#ifndef STEPER_H
-#define STEPER_H
+#ifndef STEPPER_H
+#define STEPPER_H
 
 #include <Arduino.h>
 #include <AccelStepper.h>
@@ -21,7 +21,7 @@ float reqRPM(float speed_ms, float wheelRad);
 float adjPotiSpeed(float speed_ms, float percentage);
 
 /* Converts the speed from miles per hour to meters per second */
-float mphToMs(float speed_mph);
+float kmhToMs(float speed_kmh);
 
 /* Converts the required RPM from the motor to required pulse per second sent to the driver*/
 float RPMtoPPS(float rpm, int pulsePerRev); 

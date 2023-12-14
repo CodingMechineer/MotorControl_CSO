@@ -254,7 +254,7 @@ ISOBUSMessage CANClass::getMessageISOBUS(unsigned int pgn, unsigned int spn, cha
 						if (NBVehicleSpeed_SPN == spn) /* Navigation based vehicle speed */
 						{	
                             /* Debugging */
-                            // Serial.println("Navigation based vehicle speed received");                          
+                            Serial.println("Navigation based vehicle speed received");                          
 							
                             speed = ((i.data[3]*256) + i.data[2]) * speedRes;
                             // speed = 69.9; // FOR TESTING                       
