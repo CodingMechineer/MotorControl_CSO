@@ -95,7 +95,7 @@ void loop()
     SpeedSignal = float(receiveMessage.spn_data)/floatFact;
   }
   effSpeedMS = kmhToMs(SpeedSignal);
-  adjPerc = float(getPotiMap(potiAdjSpeed, 900, 1100)/floatFact); // Adjust the speed between 90% and 110% 
+  adjPerc = float(getPotiMap(potiAdjSpeed, 950, 1050)/floatFact); // Adjust the speed between 95% and 105% 
   adjSpeedMS = adjPotiSpeed(effSpeedMS, adjPerc); 
   reqMotRPM = reqRPM(adjSpeedMS, seedWheelDia);
   reqPPS = RPMtoPPS(reqMotRPM, pulsePerRev);
@@ -108,18 +108,10 @@ void loop()
   //   Serial.println(reqMotRPM);
   //   Serial.println(reqPPS);
   // }
-  
-  //  Set minimum pulses per second so the motor always turns at a minimum speed.
-  int minPPS=67;
-  if (reqPPS<=minPPS){
-    stepper.setSpeed(minPPS*gearRatio);
-    stepper.runSpeed();
-  }
-  else{
-     /* Set the speed of the motor*/
-    stepper.setSpeed(reqPPS*gearRatio);
-    stepper.runSpeed();
-  }
+
+  /* Set the speed of the motor*/
+  stepper.setSpeed(reqPPS);
+  stepper.runSpeed();
 
   /* Updates the display 
   

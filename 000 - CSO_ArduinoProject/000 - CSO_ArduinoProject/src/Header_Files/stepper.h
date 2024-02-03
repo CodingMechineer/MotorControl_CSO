@@ -11,8 +11,7 @@
 
 const float seedWheelDia = 0.254; // in meters
 
-const int pulsePerRev = 200;
-const int gearRatio = 5;
+const int pulsePerRev = 1000;
 /////////////////////////////////////////////////////////////////
 
 /* Speed in meters per second, wheel radius in meters */
